@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Genre;
+use App\Repository\GenreRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GenreController extends AbstractController
@@ -59,9 +63,66 @@ class GenreController extends AbstractController
                     "genre_view",
                     [
                         "id"=> $genre->getId()
-                    ]
+                    ],
+                    UrlGeneratorInterface::ABSOLUTE_URL
                 )
             ]
         );
+    }
+
+    /**
+     * @Route("/genre/{id}", name="genre_delete", methods={"DELETE"}, requirements={
+     * "id"="\d+"
+     * })
+     */
+
+    public function genreDelete($id, EntityManagerInterface $em, GenreRepository $r){
+        $genre = $r->find($id);
+        if($genre){
+            $em->remove($genre);
+            $em ->flush();
+
+            return $this->json([
+                "message"=> "Genre '%s' successfully deleted!", $genre->getName()
+            ]);
+        }else{
+            return $this->json([
+                "error_message" => "No genre found with this id:" .$id
+                
+            ], 404);
+
+        }        
+
+    }
+
+    /**
+     * @Route("/genre/{id}", name="genre_update", methods={"PUT"}, requirements={
+     * "id" = "\d+"
+     * })
+     */
+
+    public function genreUpdate($id,EntityManagerInterface $em, GenreRepository $r, Request $request, SerializerInterface $serializer){
+        $genre = $r->find($id);
+
+        if($genre){
+            $data = $request->getContent();
+            //on peut pointer au serializer une entité existante sur laquelle effectuer des modifications
+            //avec l'option object_to_populate
+            $genreUpdate = $serializer->deserialize($data, Genre::class, 'json', [
+                'object_to_populate'=>$genre
+            ]);
+            //l'entite étant déjà suivie par doctrine il nous suffit de lancer flush pour appliquer la modif
+            $em->flush();
+
+            return $this->json(
+                $genreUpdate
+            );
+
+        }else{
+            return $this->json([
+                "error_message"=>"No genre found with that id" .$id
+            ]);
+        }
+
     }
 }
