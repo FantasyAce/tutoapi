@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
@@ -15,36 +16,43 @@ class Person
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"person", "movie"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"person", "movie"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"person", "movie"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"person"})
      */
     private $dob;
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Groups({"person", "movie"})
      */
     private $nationality;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Movie", mappedBy="director")
+     * @Groups({"person"})
      */
     private $moviesDone;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Movie", mappedBy="actors")
+     * @Groups({"person"})
      */
     private $moviesIn;
 

@@ -21,7 +21,7 @@ class PersonController extends AbstractController
     {
 
         $persons =$this->getDoctrine()->getRepository(Person::class)->findAll();
-        return $this->json($persons);
+        return $this->json($persons, 200, [], ['groups' => 'person']);
     }
 
     /**
@@ -34,7 +34,7 @@ class PersonController extends AbstractController
         $persons = $this->getDoctrine()->getRepository(Person::class)->find($id);
 
     if($persons){
-        return $this->json($persons);
+        return $this->json($persons, 200, [], ['groups' => 'person']);
 
     }else{
         return $this->json([

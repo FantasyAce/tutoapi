@@ -20,7 +20,7 @@ class MovieController extends AbstractController
     {
 
         $movies =$this->getDoctrine()->getRepository(Movie::class)->findAll();
-        return $this->json($movies);
+        return $this->json($movies, 200, [], ['groups' => 'movie']);
     }
 
     /**
@@ -33,7 +33,7 @@ class MovieController extends AbstractController
         $movies = $this->getDoctrine()->getRepository(Movie::class)->find($id);
 
     if($movies){
-        return $this->json($movies);
+        return $this->json($movies, 200, [], ['groups' => 'movie']);
 
     }else{
         return $this->json([

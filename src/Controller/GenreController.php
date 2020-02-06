@@ -22,7 +22,7 @@ class GenreController extends AbstractController
     {
 
         $genres =$this->getDoctrine()->getRepository(Genre::class)->findAll();
-        return $this->json($genres);
+        return $this->json($genres, 200, [], ['groups' => 'genre']);
     }
 
     /**
@@ -35,7 +35,7 @@ class GenreController extends AbstractController
         $genres = $this->getDoctrine()->getRepository(Genre::class)->find($id);
 
     if($genres){
-        return $this->json($genres);
+        return $this->json($genres, 200, [], ['groups' => 'genre']);
 
     }else{
         return $this->json([
